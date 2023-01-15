@@ -19,36 +19,44 @@ function onSearch(e) {
   if (!searchQuery) {
     cleanListHTML();
     cleanInfoHTML();
+
     return;
   }
 
   fetchCountries(searchQuery)
     .then(data => {
       console.log(data);
+
       if (data.length >= 10) {
         Notiflix.Notify.info(
           'Too many matches found. Please enter a more specific name.'
         );
+
         return;
       }
 
       if (data.length > 1 && data.length < 11) {
         createListHTML(data);
         cleanInfoHTML();
+
         return;
       }
 
       if (data.length === 1) {
         createListHTML(data);
         createInfoHTML(data);
+
+        const countryTitleEl = document.querySelector('.country-title');
+        countryTitleEl.style.fontSize = '38px';
+
         return;
       }
     })
     .catch(err => {
-      console.log(err);
       Notiflix.Notify.failure('Oops, there is no country with that name.');
       cleanListHTML();
       cleanInfoHTML();
+
       return;
     });
 }
@@ -74,7 +82,7 @@ function createMarkupList(arr) {
     .map(({ name: { official }, flags: { svg } }) => {
       return `<li class="country-item">
           <img class="country-flags" src="${svg}" alt="Flag image ${official}" />
-          <h2 class="country-name">${official}</h2>
+          <h2 class="country-title">${official}</h2>
       </li>`;
     })
     .join('');
@@ -86,9 +94,9 @@ function createMarkupInfo(arr) {
       const languageNames = Object.values(languages).join(', ');
 
       return `<li class="country-info-item">
-          <p class="country-capital">Capital: ${capital}</p>
-          <p class="country-population">Population: ${population}</p>
-          <p class="country-languages">Languages: ${languageNames}</p>
+          <p class="country-capital"><span class="country-span">Capital:</span> ${capital}</p>
+          <p class="country-population"><span class="country-span">Population:</span> ${population}</p>
+          <p class="country-languages"><span class="country-span">Languages:</span> ${languageNames}</p>
       </li>`;
     })
     .join('');
